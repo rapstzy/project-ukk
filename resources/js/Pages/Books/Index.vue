@@ -1,7 +1,8 @@
-﻿<script setup>
+<script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import Spinner from '@/Components/Spinner.vue';
 
 const props = defineProps({
     books: {
@@ -170,17 +171,17 @@ onBeforeUnmount(() => {
                 <div class="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
                     <div class="max-w-3xl">
                         <div class="inline-flex rounded-full border border-gray-800 bg-black/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-gray-400">
-                            {{ isAdmin ? 'Admin catalog' : 'Reader catalog' }}
+                            {{ isAdmin ? 'Katalog admin' : 'Katalog pembaca' }}
                         </div>
                         <h1 class="mt-5 text-4xl font-black leading-[0.95] tracking-tight sm:text-6xl">
-                            Books that move with the scroll.
+                            Buku yang bergerak mengikuti scroll.
                         </h1>
                         <p class="mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
                             <template v-if="isAdmin">
-                                Koleksi buku disusun seperti panel parallax bertumpuk. Admin tetap punya akses cepat untuk edit, stok, arsip, dan restore.
+                                Kelola koleksi buku perpustakaan mulai dari pembaruan data, pengaturan stok, hingga pengarsipan buku secara efisien.
                             </template>
                             <template v-else>
-                                Jelajahi buku lewat kartu yang saling overlap saat scroll, lalu pilih maksimal tiga judul untuk masuk ke daftar pinjaman.
+                                Temukan berbagai buku menarik dari koleksi perpustakaan kami dan buat daftar peminjaman Anda dengan mudah.
                             </template>
                         </p>
                     </div>
@@ -191,7 +192,7 @@ onBeforeUnmount(() => {
                             :href="route('books.create')"
                             class="rounded-[1.5rem] border border-gray-800 bg-white px-5 py-4 text-black transition hover:bg-gray-200"
                         >
-                            <div class="text-xs uppercase tracking-[0.3em] text-gray-600">Create</div>
+                            <div class="text-xs uppercase tracking-[0.3em] text-gray-600">Buat</div>
                             <div class="mt-2 text-lg font-semibold">Tambah buku</div>
                             <div class="mt-2 text-sm leading-6 text-gray-600">Tambah koleksi baru.</div>
                         </a>
@@ -200,8 +201,8 @@ onBeforeUnmount(() => {
                             :href="route('dashboard')"
                             class="rounded-[1.5rem] border border-gray-800 bg-white/5 p-5 transition hover:border-white/20 hover:bg-white/10"
                         >
-                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Back</div>
-                            <div class="mt-2 text-lg font-semibold text-white">Dashboard</div>
+                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Kembali</div>
+                            <div class="mt-2 text-lg font-semibold text-white">Beranda</div>
                             <div class="mt-2 text-sm leading-6 text-gray-400">Kembali ke ringkasan.</div>
                         </a>
                     </div>
@@ -213,11 +214,11 @@ onBeforeUnmount(() => {
                     <div class="space-y-4">
                         <div class="flex items-center justify-between gap-4">
                             <div>
-                                <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Search</div>
-                                <h2 class="mt-2 text-2xl font-black text-white">Find a book</h2>
+                                <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Cari</div>
+                                <h2 class="mt-2 text-2xl font-black text-white">Temukan buku</h2>
                             </div>
                             <div class="rounded-full border border-gray-800 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-gray-300">
-                                {{ visibleBooks.length }} books
+                                {{ visibleBooks.length }} buku
                             </div>
                         </div>
 
@@ -291,14 +292,14 @@ onBeforeUnmount(() => {
                                     <div :class="['absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent', coverAccent(index)]"></div>
                                     <div v-if="book.deleted_at && isAdmin" class="absolute inset-0 z-10 flex items-center justify-center bg-black/70 backdrop-blur-sm">
                                         <div class="rounded-[1.5rem] border border-red-900/40 bg-red-950/50 px-4 py-3 text-center">
-                                            <div class="text-xs uppercase tracking-[0.35em] text-red-300">Archived</div>
-                                            <div class="mt-1 text-lg font-bold text-white">Book removed</div>
+                                            <div class="text-xs uppercase tracking-[0.35em] text-red-300">Arsip</div>
+                                            <div class="mt-1 text-lg font-bold text-white">Buku dihapus</div>
                                         </div>
                                     </div>
 
                                     <div class="absolute left-0 right-0 top-0 flex items-center justify-between p-4">
                                         <span class="rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gray-200">
-                                            {{ isAdmin ? 'Admin' : 'Reader' }}
+                                            {{ isAdmin ? 'Admin' : 'Pembaca' }}
                                         </span>
 
                                         <span
@@ -310,13 +311,13 @@ onBeforeUnmount(() => {
                                                     : 'border-rose-900/40 bg-rose-950/60 text-rose-300'
                                             ]"
                                         >
-                                            {{ book.stock > 0 ? `${book.stock} in stock` : 'Out' }}
+                                            {{ book.stock > 0 ? `${book.stock} stok` : 'Habis' }}
                                         </span>
                                     </div>
 
                                     <div v-if="selectedBooks.includes(book.id)" class="absolute bottom-4 left-4">
                                         <span class="rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-sky-300">
-                                            Selected
+                                            Terpilih
                                         </span>
                                     </div>
                                 </div>
@@ -333,7 +334,7 @@ onBeforeUnmount(() => {
 
                                         <div class="flex flex-wrap gap-2 text-xs text-gray-400">
                                             <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">ISBN {{ book.isbn }}</span>
-                                            <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Stock {{ book.stock }}</span>
+                                            <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Stok {{ book.stock }}</span>
                                         </div>
 
                                         <p class="text-sm leading-6 text-gray-400">
@@ -344,16 +345,16 @@ onBeforeUnmount(() => {
                                             <div v-show="isExpanded(book.id)" class="space-y-3 border-t border-gray-800 pt-4">
                                                 <div class="grid gap-3 sm:grid-cols-3">
                                                     <div class="rounded-[1.25rem] border border-gray-800 bg-white/5 p-3">
-                                                        <div class="text-xs uppercase tracking-[0.28em] text-gray-500">Stock</div>
+                                                        <div class="text-xs uppercase tracking-[0.28em] text-gray-500">Stok</div>
                                                         <div class="mt-2 text-sm font-black text-white">{{ book.stock }}</div>
                                                     </div>
                                                     <div class="rounded-[1.25rem] border border-gray-800 bg-white/5 p-3">
-                                                        <div class="text-xs uppercase tracking-[0.28em] text-gray-500">State</div>
-                                                        <div class="mt-2 text-sm font-black text-white">{{ book.deleted_at ? 'Archived' : 'Active' }}</div>
+                                                        <div class="text-xs uppercase tracking-[0.28em] text-gray-500">Status</div>
+                                                        <div class="mt-2 text-sm font-black text-white">{{ book.deleted_at ? 'Arsip' : 'Aktif' }}</div>
                                                     </div>
                                                     <div class="rounded-[1.25rem] border border-gray-800 bg-white/5 p-3">
                                                         <div class="text-xs uppercase tracking-[0.28em] text-gray-500">Mode</div>
-                                                        <div class="mt-2 text-sm font-black text-white">{{ isAdmin ? 'Admin' : 'Reader' }}</div>
+                                                        <div class="mt-2 text-sm font-black text-white">{{ isAdmin ? 'Admin' : 'Pembaca' }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -365,7 +366,7 @@ onBeforeUnmount(() => {
                                                 @click.stop="toggleDetails(book.id)"
                                                 class="rounded-full border border-white/10 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-black transition hover:bg-gray-200"
                                             >
-                                                {{ isExpanded(book.id) ? 'Hide' : 'View' }}
+                                                {{ isExpanded(book.id) ? 'Tutup' : 'Lihat' }}
                                             </button>
 
                                             <div v-if="isAdmin && !book.deleted_at" class="flex gap-2">
@@ -373,16 +374,16 @@ onBeforeUnmount(() => {
                                                     Edit
                                                 </a>
                                                 <a :href="route('books.stock.edit', book.id)" class="rounded-full border border-gray-800 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-gray-300 transition hover:bg-white/10 hover:text-white">
-                                                    Stock
+                                                    Stok
                                                 </a>
                                             </div>
 
                                             <div v-else-if="isAdmin && book.deleted_at" class="flex gap-2">
                                                 <button @click.stop="restoreBook(book.id)" class="rounded-full border border-emerald-900/40 bg-emerald-950/40 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300 transition hover:bg-emerald-900/60">
-                                                    Restore
+                                                    Pulihkan
                                                 </button>
                                                 <button @click.stop="forceDeleteBook(book.id)" class="rounded-full border border-red-900/40 bg-red-950/40 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-red-300 transition hover:bg-red-900/60">
-                                                    Delete
+                                                    Hapus
                                                 </button>
                                             </div>
 
@@ -392,16 +393,17 @@ onBeforeUnmount(() => {
                                                     :disabled="book.stock === 0 || borrowForm.processing"
                                                     @click.stop="toggleSelect(book.id)"
                                                     :class="[
-                                                        'w-full rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] transition',
+                                                        'w-full inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] transition',
                                                         selectedBooks.includes(book.id)
                                                             ? 'border border-sky-500/40 bg-sky-500 text-black'
                                                             : 'border border-white/10 bg-white/5 text-white hover:bg-white/10 disabled:cursor-not-allowed disabled:bg-gray-800 disabled:text-gray-500'
                                                     ]"
                                                 >
-                                                    {{ selectedBooks.includes(book.id) ? 'Selected' : book.stock > 0 ? 'Add' : 'Out of stock' }}
+                                                    <Spinner v-if="borrowForm.processing && selectedBooks.includes(book.id)" size="sm" />
+                                                    {{ selectedBooks.includes(book.id) ? 'Terpilih' : book.stock > 0 ? 'Tambah' : 'Stok Habis' }}
                                                 </button>
                                                 <div v-else class="rounded-full border border-gray-800 bg-black/60 px-4 py-2 text-xs text-gray-500">
-                                                    Archived
+                                                    Terarsip
                                                 </div>
                                             </div>
                                         </div>
@@ -417,18 +419,19 @@ onBeforeUnmount(() => {
                 <div v-if="selectedBooks.length > 0" class="fixed bottom-0 left-0 right-0 z-30 border-t border-gray-800 bg-black/95 px-4 py-4 backdrop-blur">
                     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
                         <div>
-                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Borrow queue</div>
+                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Antrean pinjam</div>
                             <div class="mt-1 text-white">
                                 <span class="text-2xl font-black">{{ selectedBooks.length }}</span>
-                                <span class="ml-2 text-sm text-gray-400">of 3 books selected</span>
+                                <span class="ml-2 text-sm text-gray-400">dari 3 buku terpilih</span>
                             </div>
                         </div>
                         <button
                             @click="submitBorrow"
                             :disabled="borrowForm.processing"
-                            class="rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:bg-gray-500"
+                            class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:bg-gray-500"
                         >
-                            {{ borrowForm.processing ? 'Processing...' : 'Pinjam buku' }}
+                            <Spinner v-if="borrowForm.processing" size="sm" />
+                            {{ borrowForm.processing ? 'Memproses...' : 'Pinjam buku' }}
                         </button>
                     </div>
                 </div>

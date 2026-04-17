@@ -1,7 +1,6 @@
-﻿<script setup>
+<script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -21,37 +20,31 @@ const userHandle = computed(() => user.value?.email?.split('@')[0] || 'reader');
 </script>
 
 <template>
-    <Head title="Profile" />
+    <Head title="Profil" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                 <div class="max-w-3xl">
                     <div class="inline-flex rounded-full border border-gray-800 bg-black/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-gray-400">
-                        Account profile
+                        Profil Akun
                     </div>
                     <h1 class="mt-5 text-4xl font-black leading-[0.95] tracking-tight sm:text-5xl">
-                        Manage your account.
+                        Kelola akun Anda.
                     </h1>
                     <p class="mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
-                        Atur identitas, keamanan, dan pilihan penghapusan akun dalam satu ruang yang tetap tenang dan fokus.
+                        Atur identitas dan pilihan penghapusan akun dalam satu ruang yang tetap tenang dan fokus.
                     </p>
                 </div>
 
-                <div class="grid gap-3 sm:grid-cols-3 lg:min-w-[420px]">
+                <div class="grid gap-3 sm:grid-cols-2 lg:min-w-[280px]">
                     <div class="rounded-[1.5rem] border border-gray-800 bg-white/5 p-4">
                         <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Handle</div>
                         <div class="mt-2 truncate text-sm font-semibold text-white">@{{ userHandle }}</div>
                     </div>
                     <div class="rounded-[1.5rem] border border-gray-800 bg-white/5 p-4">
-                        <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Role</div>
-                        <div class="mt-2 text-sm font-semibold text-white">{{ user.role || 'user' }}</div>
-                    </div>
-                    <div class="rounded-[1.5rem] border border-gray-800 bg-white/5 p-4">
-                        <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Status</div>
-                        <div class="mt-2 text-sm font-semibold text-white">
-                            {{ user.email_verified_at ? 'Verified' : 'Pending' }}
-                        </div>
+                        <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Peran</div>
+                        <div class="mt-2 text-sm font-semibold text-white uppercase">{{ user.role || 'user' }}</div>
                     </div>
                 </div>
             </div>
@@ -70,21 +63,17 @@ const userHandle = computed(() => user.value?.email?.split('@')[0] || 'reader');
                         </div>
                     </div>
 
-                    <div class="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                    <div class="mt-6">
                         <div class="rounded-[1.5rem] border border-gray-800 bg-white/5 p-4">
-                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Account type</div>
-                            <div class="mt-2 text-sm font-semibold text-white">{{ user.role === 'admin' ? 'Administrator' : 'Reader' }}</div>
-                        </div>
-                        <div class="rounded-[1.5rem] border border-gray-800 bg-white/5 p-4">
-                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Verification</div>
-                            <div class="mt-2 text-sm font-semibold text-white">{{ user.email_verified_at ? 'Verified' : 'Needs attention' }}</div>
+                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Tipe Akun</div>
+                            <div class="mt-2 text-sm font-semibold text-white">{{ user.role === 'admin' ? 'Administrator' : 'Pembaca' }}</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="rounded-[2rem] border border-gray-800 bg-[radial-gradient(circle_at_top,_rgba(29,155,240,0.16),_transparent_42%),linear-gradient(160deg,_#050505_0%,_#0d0d0d_100%)] p-6 shadow-2xl shadow-black/20">
-                    <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Workspace note</div>
-                    <h2 class="mt-3 text-2xl font-black text-white">Clean, fast, and focused.</h2>
+                    <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Catatan Ruang Kerja</div>
+                    <h2 class="mt-3 text-2xl font-black text-white">Bersih, Cepat, dan Fokus.</h2>
                     <p class="mt-3 text-sm leading-6 text-gray-400">
                         Profil ini mengikuti bahasa visual yang sama dengan dashboard dan katalog buku, supaya seluruh aplikasi terasa menyatu.
                     </p>
@@ -96,8 +85,6 @@ const userHandle = computed(() => user.value?.email?.split('@')[0] || 'reader');
                     :must-verify-email="mustVerifyEmail"
                     :status="status"
                 />
-
-                <UpdatePasswordForm />
 
                 <DeleteUserForm />
             </div>

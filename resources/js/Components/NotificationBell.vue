@@ -22,7 +22,11 @@ const formatDate = (value) => {
     }).format(new Date(value));
 };
 
-const actionLabel = (item) => (item.data?.kind === 'loan_ticket_ready' ? 'Buka tiket' : 'Buka');
+const actionLabel = (item) => {
+    if (item.data?.kind === 'loan_ticket_ready') return 'Buka tiket';
+    if (item.data?.kind === 'password_reset_approved') return 'Atur password';
+    return 'Buka';
+};
 </script>
 
 <template>
@@ -55,7 +59,7 @@ const actionLabel = (item) => (item.data?.kind === 'loan_ticket_ready' ? 'Buka t
                 <div class="flex items-center justify-between border-b border-gray-800 px-4 py-3">
                     <div>
                         <div class="text-sm font-semibold text-white">Notifikasi</div>
-                        <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Inbox terbaru</div>
+                        <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Kotak masuk terbaru</div>
                     </div>
                     <Link
                         :href="route('notifications.index')"
@@ -71,12 +75,10 @@ const actionLabel = (item) => (item.data?.kind === 'loan_ticket_ready' ? 'Buka t
                         Belum ada notifikasi.
                     </div>
 
-                    <a
+                    <Link
                         v-for="item in recentNotifications"
                         :key="item.id"
                         :href="item.data?.action_url || route('notifications.index')"
-                        target="_blank"
-                        rel="noopener noreferrer"
                         class="block rounded-2xl border border-gray-800 bg-white/5 px-4 py-3 transition hover:border-white/20 hover:bg-white/10"
                         @click="open = false"
                     >
@@ -97,7 +99,7 @@ const actionLabel = (item) => (item.data?.kind === 'loan_ticket_ready' ? 'Buka t
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </Transition>

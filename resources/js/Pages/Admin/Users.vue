@@ -1,7 +1,8 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import { Head, router, usePage, Link } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import Spinner from '@/Components/Spinner.vue';
 
 const props = defineProps({
     users: {
@@ -12,34 +13,17 @@ const props = defineProps({
 
 const page = usePage();
 const flashSuccess = computed(() => page.props.flash?.success || '');
-const showPassword = ref(false);
-const showConfirmation = ref(false);
+const authUser = computed(() => page.props.auth.user);
+const deletingId = ref(null);
 
-const form = useForm({
-    user_id: '',
-    password: '',
-    password_confirmation: '',
-});
-
-const recentPasswordRequests = computed(() => {
-    return (page.props.notificationSummary?.recent || []).filter((item) => item.data?.kind === 'password_reset_requested');
-});
-
-const selectedUser = computed(() => {
-    return props.users.data?.find((user) => String(user.id) === String(form.user_id));
-});
-
-const submit = () => {
-    if (!form.user_id) {
-        return;
+const deleteUser = (user) => {
+    if (confirm(`Apakah Anda yakin ingin menghapus pengguna ${user.name}? Semua data peminjaman terkait juga akan terhapus.`)) {
+        deletingId.value = user.id;
+        router.delete(route('admin.users.destroy', user.id), {
+            preserveScroll: true,
+            onFinish: () => deletingId.value = null,
+        });
     }
-
-    form.put(route('admin.users.password.update', form.user_id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.reset('password', 'password_confirmation');
-        },
-    });
 };
 
 const roleLabel = (role) => role === 'admin' ? 'Admin' : 'User';
@@ -54,13 +38,13 @@ const roleLabel = (role) => role === 'admin' ? 'Admin' : 'User';
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                     <div class="max-w-3xl">
                         <div class="inline-flex rounded-full border border-gray-800 bg-black/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-gray-400">
-                            Admin access
+                            Akses Admin
                         </div>
                         <h1 class="mt-5 text-4xl font-black leading-[0.95] tracking-tight sm:text-6xl">
                             Kelola akun user
                         </h1>
                         <p class="mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
-                            Admin bisa mengatur password semua user langsung dari panel ini, tanpa perlu email reset.
+                            Lihat dan kelola seluruh akun pengguna yang terdaftar di sistem perpustakaan.
                         </p>
                     </div>
                 </div>
@@ -70,15 +54,15 @@ const roleLabel = (role) => role === 'admin' ? 'Admin' : 'User';
                 {{ flashSuccess }}
             </div>
 
-            <div class="mt-8 grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+            <div class="mt-8">
                 <section class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6 shadow-2xl shadow-black/20 sm:p-8">
                     <div class="flex items-center justify-between gap-4">
                         <div>
-                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Users</div>
+                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Pengguna</div>
                             <h2 class="mt-2 text-2xl font-black text-white">Daftar akun</h2>
                         </div>
                         <span class="rounded-full border border-gray-800 bg-white/5 px-4 py-2 text-xs font-semibold text-gray-300">
-                            {{ users.data?.length || 0 }} items
+                            {{ users.data?.length || 0 }} item
                         </span>
                     </div>
 
@@ -90,13 +74,25 @@ const roleLabel = (role) => role === 'admin' ? 'Admin' : 'User';
                         >
                             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                 <div class="min-w-0">
-                                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">User #{{ user.id }}</div>
+                                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Pengguna #{{ user.id }}</div>
                                     <div class="mt-1 truncate text-xl font-bold text-white">{{ user.name }}</div>
                                     <div class="mt-1 text-sm text-gray-400">{{ user.email }}</div>
                                 </div>
-                                <span :class="['inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.25em]', user.role === 'admin' ? 'border-violet-900/40 bg-violet-950/50 text-violet-300' : 'border-gray-800 bg-gray-900 text-gray-300']">
-                                    {{ roleLabel(user.role) }}
-                                </span>
+                                <div class="flex items-center gap-3">
+                                    <span :class="['inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.25em]', user.role === 'admin' ? 'border-violet-900/40 bg-violet-950/50 text-violet-300' : 'border-gray-800 bg-gray-900 text-gray-300']">
+                                        {{ roleLabel(user.role) }}
+                                    </span>
+
+                                    <button
+                                        v-if="user.role !== 'admin' && user.id !== authUser.id"
+                                        @click="deleteUser(user)"
+                                        :disabled="deletingId === user.id"
+                                        class="inline-flex items-center gap-2 rounded-full border border-red-900/40 bg-red-950/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-red-400 transition hover:bg-red-900/40 disabled:opacity-50"
+                                    >
+                                        <Spinner v-if="deletingId === user.id" size="sm" />
+                                        {{ deletingId === user.id ? 'Menghapus...' : 'Hapus' }}
+                                    </button>
+                                </div>
                             </div>
                         </article>
                     </div>
@@ -119,96 +115,6 @@ const roleLabel = (role) => role === 'admin' ? 'Admin' : 'User';
                         />
                     </div>
                 </section>
-
-                <aside class="space-y-6">
-                    <section class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6">
-                        <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Reset password</div>
-                        <form class="mt-4 space-y-4" @submit.prevent="submit">
-                            <div>
-                                <label class="mb-2 block text-sm font-semibold text-gray-300">Pilih user</label>
-                                <select
-                                    v-model="form.user_id"
-                                    class="w-full rounded-2xl border border-gray-800 bg-black px-4 py-3 text-white focus:border-white focus:outline-none"
-                                >
-                                    <option value="">Pilih akun</option>
-                                    <option v-for="user in users.data" :key="user.id" :value="user.id">
-                                        {{ user.name }} - {{ user.email }}
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="mb-2 block text-sm font-semibold text-gray-300">Password baru</label>
-                                <div class="relative">
-                                    <input
-                                        v-model="form.password"
-                                        :type="showPassword ? 'text' : 'password'"
-                                        class="w-full rounded-2xl border border-gray-800 bg-black px-4 py-3 pr-20 text-white focus:border-white focus:outline-none"
-                                        placeholder="Minimal 8 karakter"
-                                    />
-                                    <button
-                                        type="button"
-                                        @click="showPassword = !showPassword"
-                                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-gray-800 bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-300 transition hover:border-gray-600 hover:text-white"
-                                    >
-                                        {{ showPassword ? 'Hide' : 'Show' }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="mb-2 block text-sm font-semibold text-gray-300">Konfirmasi password</label>
-                                <div class="relative">
-                                    <input
-                                        v-model="form.password_confirmation"
-                                        :type="showConfirmation ? 'text' : 'password'"
-                                        class="w-full rounded-2xl border border-gray-800 bg-black px-4 py-3 pr-20 text-white focus:border-white focus:outline-none"
-                                        placeholder="Ulangi password"
-                                    />
-                                    <button
-                                        type="button"
-                                        @click="showConfirmation = !showConfirmation"
-                                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-gray-800 bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-300 transition hover:border-gray-600 hover:text-white"
-                                    >
-                                        {{ showConfirmation ? 'Hide' : 'Show' }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                :disabled="form.processing || !form.user_id"
-                                class="w-full rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:bg-gray-500"
-                            >
-                                {{ form.processing ? 'Menyimpan...' : 'Reset password' }}
-                            </button>
-                        </form>
-                    </section>
-
-                    <section class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6">
-                        <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Permintaan terbaru</div>
-                        <div class="mt-4 space-y-3">
-                            <div v-if="recentPasswordRequests.length === 0" class="rounded-2xl border border-dashed border-gray-800 bg-white/5 p-4 text-sm text-gray-500">
-                                Belum ada permintaan reset password.
-                            </div>
-                            <article
-                                v-for="item in recentPasswordRequests"
-                                :key="item.id"
-                                class="rounded-2xl border border-gray-800 bg-white/5 p-4"
-                            >
-                                <div class="text-sm font-semibold text-white">{{ item.data?.title }}</div>
-                                <div class="mt-1 text-sm text-gray-400">{{ item.data?.message }}</div>
-                                <div class="mt-2 text-xs uppercase tracking-[0.24em] text-gray-500">
-                                    {{ item.data?.user_email }}
-                                </div>
-                            </article>
-                        </div>
-
-                        <div v-if="selectedUser" class="mt-5 rounded-2xl border border-violet-900/30 bg-violet-950/20 p-4 text-sm text-violet-200">
-                            Password baru akan diterapkan untuk <span class="font-bold">{{ selectedUser.name }}</span>.
-                        </div>
-                    </section>
-                </aside>
             </div>
         </div>
     </AppLayout>

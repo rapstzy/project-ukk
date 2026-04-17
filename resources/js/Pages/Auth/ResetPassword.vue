@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
+import { ref } from 'vue';
 
 const props = defineProps({
     email: {
@@ -12,6 +13,9 @@ const props = defineProps({
         required: true,
     },
 });
+
+const showPassword = ref(false);
+const showConfirmation = ref(false);
 
 const form = useForm({
     token: props.token,
@@ -51,24 +55,24 @@ const submit = () => {
                     <div class="py-16 lg:py-0">
                         <p class="text-sm uppercase tracking-[0.35em] text-sky-400/90">Reset password</p>
                         <h1 class="mt-5 max-w-lg text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl">
-                            Admin can set a new password.
+                            Akses Anda telah disetujui admin.
                         </h1>
                         <div class="mt-10 grid gap-4 sm:grid-cols-2">
                             <div class="rounded-3xl border border-gray-800 bg-white/5 p-5">
-                                <div class="text-sm font-semibold text-white">Direct control</div>
-                                <div class="mt-2 text-sm leading-6 text-gray-400">Reset password dilakukan lewat panel admin.</div>
+                                <div class="text-sm font-semibold text-white">Verifikasi Manual</div>
+                                <div class="mt-2 text-sm leading-6 text-gray-400">Permintaan Anda telah divalidasi oleh tim admin untuk keamanan.</div>
                             </div>
                             <div class="rounded-3xl border border-gray-800 bg-white/5 p-5">
-                                <div class="text-sm font-semibold text-white">Same visual flow</div>
-                                <div class="mt-2 text-sm leading-6 text-gray-400">Tetap satu bahasa desain dengan login dan register.</div>
+                                <div class="text-sm font-semibold text-white">Update Instan</div>
+                                <div class="mt-2 text-sm leading-6 text-gray-400">Password akan langsung diperbarui setelah Anda menyimpannya.</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="relative mt-10 flex flex-wrap gap-3 text-xs text-gray-500">
-                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Secure update</span>
-                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Dark UI</span>
-                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Responsive</span>
+                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Pembaruan aman</span>
+                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">UI Gelap</span>
+                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Responsif</span>
                     </div>
                 </div>
             </section>
@@ -77,8 +81,8 @@ const submit = () => {
                 <div class="w-full max-w-md">
                     <div class="rounded-[2rem] border border-gray-800 bg-[#0d0d0d] p-8 shadow-2xl shadow-black/50">
                         <div class="mb-8">
-                            <div class="text-sm uppercase tracking-[0.35em] text-gray-500">Set new password</div>
-                            <h2 class="mt-3 text-3xl font-black text-white">Reset access</h2>
+                            <div class="text-sm uppercase tracking-[0.35em] text-gray-500">Atur password baru</div>
+                            <h2 class="mt-3 text-3xl font-black text-white">Atur ulang</h2>
                             <p class="mt-2 text-sm leading-6 text-gray-400">Buat password baru untuk akun {{ props.email }}.</p>
                         </div>
 
@@ -99,27 +103,45 @@ const submit = () => {
 
                             <div>
                                 <label for="password" class="mb-2 block text-sm font-semibold text-gray-300">Password baru</label>
-                                <input
-                                    id="password"
-                                    v-model="form.password"
-                                    type="password"
-                                    required
-                                    autocomplete="new-password"
-                                    class="w-full rounded-2xl border border-gray-800 bg-black px-4 py-3 text-white placeholder:text-gray-600 focus:border-white focus:outline-none"
-                                />
+                                <div class="relative">
+                                    <input
+                                        id="password"
+                                        v-model="form.password"
+                                        :type="showPassword ? 'text' : 'password'"
+                                        required
+                                        autocomplete="new-password"
+                                        class="w-full rounded-2xl border border-gray-800 bg-black px-4 py-3 pr-20 text-white placeholder:text-gray-600 focus:border-white focus:outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="showPassword = !showPassword"
+                                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-gray-800 bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-300 transition hover:border-gray-600 hover:text-white"
+                                    >
+                                        {{ showPassword ? 'Sembunyi' : 'Lihat' }}
+                                    </button>
+                                </div>
                                 <InputError class="mt-2" :message="form.errors.password" />
                             </div>
 
                             <div>
                                 <label for="password_confirmation" class="mb-2 block text-sm font-semibold text-gray-300">Konfirmasi password</label>
-                                <input
-                                    id="password_confirmation"
-                                    v-model="form.password_confirmation"
-                                    type="password"
-                                    required
-                                    autocomplete="new-password"
-                                    class="w-full rounded-2xl border border-gray-800 bg-black px-4 py-3 text-white placeholder:text-gray-600 focus:border-white focus:outline-none"
-                                />
+                                <div class="relative">
+                                    <input
+                                        id="password_confirmation"
+                                        v-model="form.password_confirmation"
+                                        :type="showConfirmation ? 'text' : 'password'"
+                                        required
+                                        autocomplete="new-password"
+                                        class="w-full rounded-2xl border border-gray-800 bg-black px-4 py-3 pr-20 text-white placeholder:text-gray-600 focus:border-white focus:outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        @click="showConfirmation = !showConfirmation"
+                                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-gray-800 bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-300 transition hover:border-gray-600 hover:text-white"
+                                    >
+                                        {{ showConfirmation ? 'Sembunyi' : 'Lihat' }}
+                                    </button>
+                                </div>
                                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
                             </div>
 

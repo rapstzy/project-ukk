@@ -3,6 +3,7 @@ import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import Spinner from '@/Components/Spinner.vue';
 
 defineProps({
     canResetPassword: {
@@ -144,8 +145,9 @@ const submit = () => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="w-full rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:bg-gray-500"
+                                class="w-full inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:bg-gray-500"
                             >
+                                <Spinner v-if="form.processing" size="sm" />
                                 {{ form.processing ? 'Signing in...' : 'Log in' }}
                             </button>
                         </form>

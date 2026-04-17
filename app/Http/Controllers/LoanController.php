@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Loan;
 use App\Models\User;
+use App\Models\Ticket;
 use App\Notifications\LoanBorrowedNotification;
+use App\Notifications\BookReturnedAdminNotification;
+use App\Notifications\TicketDeletedUserNotification;
 use App\Services\LoanService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
@@ -63,6 +67,51 @@ class LoanController extends Controller
             'issuedAt' => optional($loan->updated_at)->toIso8601String() ?? now()->toIso8601String(),
             'canPrint' => true,
         ]);
+    }
+
+    /**
+     * Return a loan and delete ticket
+     */
+    public function returnBook(Loan $loan)
+    {
+        $this->authorize('returnLoan', $loan);
+
+        if ($loan->status !== 'verified' && $loan->status !== 'late') {
+            return back()->withErrors(['message' => 'Hanya peminjaman yang sudah diverifikasi yang dapat dikembalikan.']);
+        }
+
+        try {
+            DB::transaction(function () use ($loan) {
+                // (a) Menghapus data di tabel tickets secara permanen
+                if ($loan->ticket) {
+                    $loan->ticket->delete();
+                }
+
+                // (b) Mengupdate status di tabel loans menjadi 'returned'
+                $loan->update([
+                    'status' => 'returned',
+                    'returned_at' => now(),
+                ]);
+
+                // (c) Menambah stok buku kembali (+1) di tabel books
+                foreach ($loan->items as $item) {
+                    $item->book()->increment('stock');
+                }
+
+                // Admin menerima pesan: "Buku [Judul] telah dikembalikan oleh [Nama User]"
+                $admins = User::where('role', 'admin')->get();
+                if ($admins->isNotEmpty()) {
+                    Notification::send($admins, new BookReturnedAdminNotification($loan));
+                }
+
+                // User menerima pesan: "Tiket peminjaman Anda telah dihapus/dibatalkan"
+                $loan->user->notify(new TicketDeletedUserNotification($loan));
+            });
+
+            return back()->with('success', 'Buku berhasil dikembalikan dan tiket telah dihapus.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
     }
 
     /**

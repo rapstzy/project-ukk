@@ -11,21 +11,21 @@ const showMobileMenu = ref(false);
 
 const menuItems = computed(() => {
     const items = [
-        { label: 'Dashboard', href: 'dashboard', note: 'Overview' },
-        { label: 'Books', href: 'books.index', note: 'Catalog' },
+        { label: 'Beranda', href: 'dashboard', note: 'Ringkasan' },
+        { label: 'Buku', href: 'books.index', note: 'Katalog' },
     ];
 
     if (isAdmin.value) {
-        items.push({ label: 'Users', href: 'admin.users.index', note: 'Passwords' });
+        items.push({ label: 'Pengguna', href: 'admin.users.index', note: 'Manajemen' });
     }
 
     items.push(
         isAdmin.value
-            ? { label: 'Manage loans', href: 'loans.admin', note: 'Admin panel' }
-            : { label: 'My loans', href: 'loans.myLoans', note: 'Borrowing' }
+            ? { label: 'Kelola Pinjaman', href: 'loans.admin', note: 'Panel Admin' }
+            : { label: 'Pinjaman Saya', href: 'loans.myLoans', note: 'Peminjaman' }
     );
 
-    items.push({ label: 'Notifications', href: 'notifications.index', note: 'Inbox' });
+    items.push({ label: 'Notifikasi', href: 'notifications.index', note: 'Kotak Masuk' });
 
     return items;
 });
@@ -53,8 +53,8 @@ const handleLogout = () => {
                             </svg>
                         </span>
                         <div>
-                            <div class="text-sm font-bold uppercase tracking-[0.28em] text-gray-300">Apay's Books</div>
-                            <div class="text-xs text-gray-500">Library workspace</div>
+                            <div class="text-sm font-bold uppercase tracking-[0.28em] text-gray-300">Perpustakaan</div>
+                            <div class="text-xs text-gray-500">Ruang kerja</div>
                         </div>
                     </Link>
 
@@ -74,7 +74,7 @@ const handleLogout = () => {
                                 <div class="truncate text-xs text-gray-500">@{{ userHandle }}</div>
                             </div>
                             <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gray-400">
-                                {{ isAdmin ? 'Admin' : 'User' }}
+                                {{ isAdmin ? 'Admin' : 'Pengguna' }}
                             </span>
                         </div>
                     </div>
@@ -114,10 +114,10 @@ const handleLogout = () => {
                     class="flex w-full items-center justify-between rounded-[1.5rem] border border-gray-900 bg-white/5 px-4 py-4 text-left transition hover:border-red-900/40 hover:bg-red-950/30"
                 >
                     <div>
-                        <div class="text-sm font-semibold text-white">Logout</div>
-                        <div class="text-xs uppercase tracking-[0.25em] text-gray-500">End session</div>
+                        <div class="text-sm font-semibold text-white">Keluar</div>
+                        <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Akhiri sesi</div>
                     </div>
-                    <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Exit</span>
+                    <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Keluar</span>
                 </button>
             </div>
         </aside>
@@ -135,8 +135,8 @@ const handleLogout = () => {
                         </svg>
                     </span>
                     <div>
-                        <div class="text-sm font-bold uppercase tracking-[0.24em] text-gray-200">Apay's Books</div>
-                        <div class="text-xs text-gray-500">Library workspace</div>
+                        <div class="text-sm font-bold uppercase tracking-[0.24em] text-gray-200">Perpustakaan</div>
+                        <div class="text-xs text-gray-500">Ruang kerja</div>
                     </div>
                 </Link>
 
@@ -170,7 +170,7 @@ const handleLogout = () => {
                                 <div class="truncate text-xs text-gray-500">@{{ userHandle }}</div>
                             </div>
                             <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gray-400">
-                                {{ isAdmin ? 'Admin' : 'User' }}
+                                {{ isAdmin ? 'Admin' : 'Pengguna' }}
                             </span>
                         </div>
                     </Link>
@@ -195,17 +195,21 @@ const handleLogout = () => {
                         class="flex w-full items-center justify-between rounded-[1.5rem] border border-gray-900 bg-white/5 px-4 py-4 text-left text-white transition hover:border-red-900/40 hover:bg-red-950/30"
                     >
                         <div>
-                            <div class="text-sm font-semibold">Logout</div>
-                            <div class="text-xs uppercase tracking-[0.25em] text-gray-500">End session</div>
+                            <div class="text-sm font-semibold">Keluar</div>
+                            <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Akhiri sesi</div>
                         </div>
-                        <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Exit</span>
+                        <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Keluar</span>
                     </button>
                 </div>
             </div>
         </Transition>
 
         <main class="flex-1 overflow-y-auto pt-16 lg:pt-0">
-            <slot />
+            <Transition name="page" mode="out-in" appear>
+                <div :key="page.url">
+                    <slot />
+                </div>
+            </Transition>
         </main>
     </div>
 </template>
@@ -237,5 +241,20 @@ const handleLogout = () => {
 .slide-enter-from,
 .slide-leave-to {
     opacity: 0;
+}
+
+.page-enter-active,
+.page-leave-active {
+    transition: all 0.3s ease-out;
+}
+
+.page-enter-from {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.page-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
 }
 </style>

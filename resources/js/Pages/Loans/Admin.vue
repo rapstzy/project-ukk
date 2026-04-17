@@ -1,6 +1,8 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import Spinner from '@/Components/Spinner.vue';
 
 const props = defineProps({
     loans: {
@@ -13,26 +15,40 @@ const props = defineProps({
     },
 });
 
+const loadingId = ref(null);
+
 const cancelLoan = (loanId) => {
     if (confirm('Batalkan peminjaman ini?')) {
+        loadingId.value = loanId;
         router.post(route('loans.admin.cancel', loanId), {}, {
             preserveScroll: true,
-            onSuccess: () => router.reload({ preserveScroll: true }),
+            onFinish: () => {
+                loadingId.value = null;
+                router.reload({ preserveScroll: true });
+            },
         });
     }
 };
 
 const verifyLoan = (loanId) => {
+    loadingId.value = loanId;
     router.post(route('loans.admin.verify', loanId), {}, {
         preserveScroll: true,
-        onSuccess: () => router.reload({ preserveScroll: true }),
+        onFinish: () => {
+            loadingId.value = null;
+            router.reload({ preserveScroll: true });
+        },
     });
 };
 
 const completeReturn = (loanId) => {
+    loadingId.value = loanId;
     router.post(route('loans.admin.complete-return', loanId), {}, {
         preserveScroll: true,
-        onSuccess: () => router.reload({ preserveScroll: true }),
+        onFinish: () => {
+            loadingId.value = null;
+            router.reload({ preserveScroll: true });
+        },
     });
 };
 
@@ -51,12 +67,12 @@ const getStatusColor = (status) => {
 
 const getStatusLabel = (status) => {
     const labels = {
-        borrowed: 'Borrowed',
-        verified: 'Verified',
-        returned: 'Returned',
-        late: 'Late',
-        completed: 'Completed',
-        cancelled: 'Cancelled',
+        borrowed: 'Menunggu',
+        verified: 'Terverifikasi',
+        returned: 'Dikembalikan',
+        late: 'Terlambat',
+        completed: 'Selesai',
+        cancelled: 'Dibatalkan',
     };
 
     return labels[status] || status;
@@ -85,13 +101,13 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                     <div class="max-w-3xl">
                         <div class="inline-flex rounded-full border border-gray-800 bg-black/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-gray-400">
-                            Admin loans
+                            Pinjaman Admin
                         </div>
                         <h1 class="mt-5 text-4xl font-black leading-[0.95] tracking-tight sm:text-6xl">
-                            Control room
+                            Ruang Kendali
                         </h1>
                         <p class="mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
-                            Monitor semua peminjaman dalam tampilan card-based yang cepat dipindai dan tetap tegas seperti X.
+                            Pantau dan kelola seluruh transaksi peminjaman buku perpustakaan secara real-time untuk memastikan sirkulasi buku berjalan dengan baik.
                         </p>
                     </div>
 
@@ -100,8 +116,8 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
                             :href="route('books.index')"
                             class="rounded-3xl border border-gray-800 bg-white/5 p-5 transition hover:border-white/20 hover:bg-white/10"
                         >
-                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Catalog</div>
-                            <div class="mt-2 text-lg font-semibold text-white">Manage books</div>
+                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Katalog</div>
+                            <div class="mt-2 text-lg font-semibold text-white">Kelola Buku</div>
                             <div class="mt-2 text-sm leading-6 text-gray-400">Buka koleksi buku.</div>
                         </a>
 
@@ -109,8 +125,8 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
                             :href="route('dashboard')"
                             class="rounded-3xl border border-gray-800 bg-white/5 p-5 transition hover:border-white/20 hover:bg-white/10"
                         >
-                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Back</div>
-                            <div class="mt-2 text-lg font-semibold text-white">Dashboard</div>
+                            <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Kembali</div>
+                            <div class="mt-2 text-lg font-semibold text-white">Beranda</div>
                             <div class="mt-2 text-sm leading-6 text-gray-400">Kembali ke ringkasan.</div>
                         </a>
                     </div>
@@ -119,19 +135,19 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
 
             <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div class="rounded-3xl border border-gray-800 bg-[#0b0b0b] p-5">
-                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Total loans</div>
+                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Total Pinjaman</div>
                     <div class="mt-3 text-3xl font-black text-white">{{ stats.total || 0 }}</div>
                 </div>
                 <div class="rounded-3xl border border-gray-800 bg-[#0b0b0b] p-5">
-                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Borrowed</div>
+                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Dipinjam</div>
                     <div class="mt-3 text-3xl font-black text-white">{{ stats.borrowed || 0 }}</div>
                 </div>
                 <div class="rounded-3xl border border-gray-800 bg-[#0b0b0b] p-5">
-                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Returned</div>
+                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Dikembalikan</div>
                     <div class="mt-3 text-3xl font-black text-white">{{ stats.returned || 0 }}</div>
                 </div>
                 <div class="rounded-3xl border border-gray-800 bg-[#0b0b0b] p-5">
-                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Late</div>
+                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Terlambat</div>
                     <div class="mt-3 text-3xl font-black text-white">{{ stats.late || 0 }}</div>
                 </div>
             </div>
@@ -140,11 +156,11 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
                 <section class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6 shadow-2xl shadow-black/20 sm:p-8">
                     <div class="flex items-center justify-between gap-4">
                         <div>
-                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Feed</div>
-                            <h2 class="mt-2 text-2xl font-black text-white">Recent loan activity</h2>
+                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Aktivitas</div>
+                            <h2 class="mt-2 text-2xl font-black text-white">Aktivitas Pinjaman Terbaru</h2>
                         </div>
                         <span class="rounded-full border border-gray-800 bg-white/5 px-4 py-2 text-xs font-semibold text-gray-300">
-                            {{ loans.data?.length || 0 }} items
+                            {{ loans.data?.length || 0 }} item
                         </span>
                     </div>
 
@@ -160,7 +176,7 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
                         >
                             <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                 <div class="min-w-0 flex-1">
-                                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Loan #{{ loan.id }}</div>
+                                    <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Pinjaman #{{ loan.id }}</div>
                                     <div class="mt-1 truncate text-xl font-bold text-white">{{ loan.user?.name || '-' }}</div>
                                     <div class="mt-1 text-sm text-gray-400">{{ loan.user?.email || '-' }}</div>
                                 </div>
@@ -178,19 +194,19 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
 
                             <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                                 <div class="rounded-2xl border border-gray-800 bg-white/5 p-4">
-                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Borrowed</div>
+                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Dipinjam</div>
                                     <div class="mt-1 text-sm font-semibold text-white">{{ formatDate(loan.loan_date) }}</div>
                                 </div>
                                 <div class="rounded-2xl border border-gray-800 bg-white/5 p-4">
-                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Due</div>
+                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Jatuh Tempo</div>
                                     <div class="mt-1 text-sm font-semibold text-white">{{ formatDate(loan.due_date) }}</div>
                                 </div>
                                 <div class="rounded-2xl border border-gray-800 bg-white/5 p-4">
-                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Fine</div>
+                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Denda</div>
                                     <div class="mt-1 text-sm font-semibold text-white">{{ formatMoney(loan.fine_amount) }}</div>
                                 </div>
                                 <div class="rounded-2xl border border-gray-800 bg-white/5 p-4">
-                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Items</div>
+                                    <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Buku</div>
                                     <div class="mt-1 text-sm font-semibold text-white">{{ loan.items?.length || 0 }}</div>
                                 </div>
                             </div>
@@ -200,24 +216,30 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
                                     type="button"
                                     v-if="loan.status === 'borrowed'"
                                     @click.prevent="verifyLoan(loan.id)"
-                                    class="rounded-full border border-violet-900/40 bg-violet-950/50 px-4 py-2 text-sm font-semibold text-violet-300 transition hover:bg-violet-900/70"
+                                    :disabled="loadingId === loan.id"
+                                    class="inline-flex items-center gap-2 rounded-full border border-violet-900/40 bg-violet-950/50 px-4 py-2 text-sm font-semibold text-violet-300 transition hover:bg-violet-900/70 disabled:opacity-50"
                                 >
+                                    <Spinner v-if="loadingId === loan.id" size="sm" />
                                     Verifikasi
                                 </button>
                                 <button
                                     type="button"
                                     v-if="loan.status === 'borrowed' || loan.status === 'verified'"
                                     @click.prevent="cancelLoan(loan.id)"
-                                    class="rounded-full border border-red-900/40 bg-red-950/50 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-900/70"
+                                    :disabled="loadingId === loan.id"
+                                    class="inline-flex items-center gap-2 rounded-full border border-red-900/40 bg-red-950/50 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-900/70 disabled:opacity-50"
                                 >
+                                    <Spinner v-if="loadingId === loan.id" size="sm" />
                                     Batalkan
                                 </button>
                                 <button
                                     type="button"
                                     v-if="loan.status === 'returned' || loan.status === 'late'"
                                     @click.prevent="completeReturn(loan.id)"
-                                    class="rounded-full border border-emerald-900/40 bg-emerald-950/50 px-4 py-2 text-sm font-semibold text-emerald-300 transition hover:bg-emerald-900/70"
+                                    :disabled="loadingId === loan.id"
+                                    class="inline-flex items-center gap-2 rounded-full border border-emerald-900/40 bg-emerald-950/50 px-4 py-2 text-sm font-semibold text-emerald-300 transition hover:bg-emerald-900/70 disabled:opacity-50"
                                 >
+                                    <Spinner v-if="loadingId === loan.id" size="sm" />
                                     Konfirmasi
                                 </button>
                             </div>
@@ -246,26 +268,26 @@ const formatMoney = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}
 
                 <aside class="space-y-6">
                     <section class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6">
-                        <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Quick actions</div>
+                        <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Aksi Cepat</div>
                         <div class="mt-4 space-y-3">
                             <a :href="route('books.index')" class="flex items-center justify-between rounded-2xl border border-gray-800 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                                <span>Manage books</span>
-                                <span class="text-gray-500">Open</span>
+                                <span>Kelola Buku</span>
+                                <span class="text-gray-500">Buka</span>
                             </a>
                             <a :href="route('books.create')" class="flex items-center justify-between rounded-2xl border border-gray-800 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                                <span>Add book</span>
-                                <span class="text-gray-500">New</span>
+                                <span>Tambah Buku</span>
+                                <span class="text-gray-500">Baru</span>
                             </a>
                         </div>
                     </section>
 
                     <section class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6">
-                        <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Status guide</div>
+                        <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Panduan Status</div>
                         <div class="mt-4 space-y-3 text-sm">
-                            <div class="rounded-2xl border border-sky-900/30 bg-sky-950/30 px-4 py-3 text-sky-300">Borrowed - active request</div>
-                            <div class="rounded-2xl border border-violet-900/30 bg-violet-950/30 px-4 py-3 text-violet-300">Verified - approved</div>
-                            <div class="rounded-2xl border border-emerald-900/30 bg-emerald-950/30 px-4 py-3 text-emerald-300">Returned - closed</div>
-                            <div class="rounded-2xl border border-rose-900/30 bg-rose-950/30 px-4 py-3 text-rose-300">Late - needs attention</div>
+                            <div class="rounded-2xl border border-sky-900/30 bg-sky-950/30 px-4 py-3 text-sky-300">Dipinjam - permintaan aktif</div>
+                            <div class="rounded-2xl border border-violet-900/30 bg-violet-950/30 px-4 py-2 text-violet-300">Terverifikasi - disetujui</div>
+                            <div class="rounded-2xl border border-emerald-900/30 bg-emerald-950/30 px-4 py-3 text-emerald-300">Dikembalikan - selesai</div>
+                            <div class="rounded-2xl border border-rose-900/30 bg-rose-950/30 px-4 py-3 text-rose-300">Terlambat - butuh perhatian</div>
                         </div>
                     </section>
                 </aside>

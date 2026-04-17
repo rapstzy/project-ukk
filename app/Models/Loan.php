@@ -15,4 +15,8 @@ class Loan extends Model
     public function items() {
         return $this->hasMany(LoanItem::class);
     }
+
+    public function ticket() {
+        return $this->hasOne(Ticket::class);
+    }
 }

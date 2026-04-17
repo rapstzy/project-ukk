@@ -57,7 +57,7 @@ const actionLabel = (item) => (item.data?.kind === 'loan_ticket_ready' ? 'Buka t
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                     <div class="max-w-3xl">
                         <div class="inline-flex rounded-full border border-gray-800 bg-black/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-gray-400">
-                            Notification center
+                            Pusat notifikasi
                         </div>
                         <h1 class="mt-5 text-4xl font-black leading-[0.95] tracking-tight sm:text-6xl">
                             Semua notifikasi

@@ -39,26 +39,26 @@ const submit = () => {
                     </Link>
 
                     <div class="py-16 lg:py-0">
-                        <p class="text-sm uppercase tracking-[0.35em] text-sky-400/90">Reset access</p>
+                        <p class="text-sm uppercase tracking-[0.35em] text-sky-400/90">Akses Reset</p>
                         <h1 class="mt-5 max-w-lg text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl">
-                            Request reset through admin.
+                            Pulihkan akses akun Anda.
                         </h1>
                         <div class="mt-10 grid gap-4 sm:grid-cols-2">
                             <div class="rounded-3xl border border-gray-800 bg-white/5 p-5">
-                                <div class="text-sm font-semibold text-white">No email blast</div>
-                                <div class="mt-2 text-sm leading-6 text-gray-400">Permintaan reset langsung masuk ke admin.</div>
+                                <div class="text-sm font-semibold text-white">Proses Instan</div>
+                                <div class="mt-2 text-sm leading-6 text-gray-400">Masukkan email Anda dan langsung atur ulang password tanpa menunggu.</div>
                             </div>
                             <div class="rounded-3xl border border-gray-800 bg-white/5 p-5">
-                                <div class="text-sm font-semibold text-white">Fast handling</div>
-                                <div class="mt-2 text-sm leading-6 text-gray-400">Admin bisa ubah password dari panel user.</div>
+                                <div class="text-sm font-semibold text-white">Keamanan Berlapis</div>
+                                <div class="mt-2 text-sm leading-6 text-gray-400">Setiap perubahan password akan dicatat dan diberitahukan kepada admin.</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="relative mt-10 flex flex-wrap gap-3 text-xs text-gray-500">
-                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Admin notification</span>
-                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Dark UI</span>
-                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Responsive</span>
+                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Reset Langsung</span>
+                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">UI Gelap</span>
+                        <span class="rounded-full border border-gray-800 bg-black/60 px-3 py-1">Responsif</span>
                     </div>
                 </div>
             </section>
@@ -67,9 +67,9 @@ const submit = () => {
                 <div class="w-full max-w-md">
                     <div class="rounded-[2rem] border border-gray-800 bg-[#0d0d0d] p-8 shadow-2xl shadow-black/50">
                         <div class="mb-8">
-                            <div class="text-sm uppercase tracking-[0.35em] text-gray-500">Forgot password</div>
-                            <h2 class="mt-3 text-3xl font-black text-white">Send request</h2>
-                            <p class="mt-2 text-sm leading-6 text-gray-400">Masukkan email akunmu, lalu admin akan menerima notifikasi reset password.</p>
+                            <div class="text-sm uppercase tracking-[0.35em] text-gray-500">Lupa password</div>
+                            <h2 class="mt-3 text-3xl font-black text-white">Atur ulang</h2>
+                            <p class="mt-2 text-sm leading-6 text-gray-400">Masukkan email akunmu untuk langsung menuju halaman pengaturan password baru.</p>
                         </div>
 
                         <div v-if="status" class="mb-5 rounded-2xl border border-emerald-900/40 bg-emerald-950/30 px-4 py-3 text-sm text-emerald-300">
@@ -97,7 +97,7 @@ const submit = () => {
                                 :disabled="form.processing"
                                 class="w-full rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:bg-gray-500"
                             >
-                                {{ form.processing ? 'Mengirim...' : 'Kirim ke admin' }}
+                                {{ form.processing ? 'Memproses...' : 'Lanjut ke Reset' }}
                             </button>
                         </form>
 

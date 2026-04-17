@@ -30,23 +30,18 @@ class UserController extends Controller
         ]);
     }
 
-    public function updatePassword(Request $request, User $user): RedirectResponse
+    public function destroy(User $user): RedirectResponse
     {
-        $validated = $request->validate([
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
-
-        $admin = $request->user();
-
-        $user->forceFill([
-            'password' => $validated['password'],
-            'remember_token' => Str::random(60),
-        ])->save();
-
-        if ($admin && Schema::hasTable('notifications')) {
-            $user->notify(new PasswordChangedByAdminNotification($admin, $user));
+        if ($user->id === auth()->id()) {
+            return back()->withErrors(['message' => 'Anda tidak bisa menghapus akun Anda sendiri.']);
         }
 
-        return back()->with('success', 'Password untuk ' . $user->name . ' berhasil diperbarui.');
+        if ($user->role === 'admin') {
+            return back()->withErrors(['message' => 'Anda tidak bisa menghapus sesama admin.']);
+        }
+
+        $user->delete();
+
+        return back()->with('success', "Pengguna {$user->name} berhasil dihapus.");
     }
 }

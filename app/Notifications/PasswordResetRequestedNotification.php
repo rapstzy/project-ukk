@@ -37,7 +37,7 @@ class PasswordResetRequestedNotification extends Notification
             'kind' => 'password_reset_requested',
             'title' => 'Permintaan reset password',
             'message' => $this->requestingUser->name . ' meminta reset password untuk akun ' . $this->requestingUser->email . '.',
-            'action_url' => route('admin.users.index', absolute: false),
+            'action_url' => route('admin.password-resets.index', absolute: false),
             'user_id' => $this->requestingUser->id,
             'user_name' => $this->requestingUser->name,
             'user_email' => $this->requestingUser->email,

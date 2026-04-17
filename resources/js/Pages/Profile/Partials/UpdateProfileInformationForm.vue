@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -24,19 +24,15 @@ const form = useForm({
 
 <template>
     <section class="rounded-[2rem] border border-gray-800 bg-[#0c0c0c] p-6 shadow-2xl shadow-black/20 sm:p-8">
-        <header class="flex flex-col gap-4 border-b border-gray-800 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <header class="border-b border-gray-800 pb-6">
             <div>
-                <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Profile</div>
+                <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Profil</div>
                 <h2 class="mt-3 text-2xl font-black text-white sm:text-3xl">
-                    Profile information
+                    Informasi Profil
                 </h2>
                 <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-400">
-                    Update your name and email address. Perubahan di sini langsung dipakai di seluruh workspace.
+                    Perbarui nama dan alamat email Anda. Perubahan di sini langsung dipakai di seluruh workspace.
                 </p>
-            </div>
-
-            <div class="rounded-full border border-gray-800 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-gray-300">
-                {{ user.email_verified_at ? 'Verified account' : 'Verification needed' }}
             </div>
         </header>
 
@@ -46,7 +42,7 @@ const form = useForm({
         >
             <div class="grid gap-5 md:grid-cols-2">
                 <div>
-                    <InputLabel for="name" value="Name" />
+                    <InputLabel for="name" value="Nama" />
                     <TextInput
                         id="name"
                         type="text"
@@ -73,31 +69,16 @@ const form = useForm({
                 </div>
             </div>
 
-            <div v-if="mustVerifyEmail && user.email_verified_at === null" class="rounded-[1.5rem] border border-amber-900/40 bg-amber-950/30 p-4 text-sm text-amber-200">
-                <div class="font-semibold text-amber-100">Email belum diverifikasi</div>
-                <p class="mt-1 leading-6 text-amber-200/80">
-                    Alamat email ini belum diverifikasi. Kirim ulang link verifikasi kalau kamu ingin memakai semua fitur akun dengan normal.
-                </p>
-                <Link
-                    :href="route('verification.send')"
-                    method="post"
-                    as="button"
-                    class="mt-4 inline-flex items-center justify-center rounded-full border border-amber-900/40 bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-amber-200 transition hover:border-amber-700/60 hover:bg-amber-950/50"
-                >
-                    Kirim ulang verifikasi
-                </Link>
-            </div>
-
             <div
                 v-show="status === 'verification-link-sent'"
                 class="rounded-[1.5rem] border border-emerald-900/40 bg-emerald-950/30 px-4 py-3 text-sm text-emerald-300"
             >
-                Link verifikasi baru sudah dikirim ke email kamu.
+                Link verifikasi baru sudah dikirim ke email Anda.
             </div>
 
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <PrimaryButton :disabled="form.processing">
-                    {{ form.recentlySuccessful ? 'Saved' : 'Save changes' }}
+                <PrimaryButton :loading="form.processing">
+                    {{ form.recentlySuccessful ? 'Tersimpan' : 'Simpan Perubahan' }}
                 </PrimaryButton>
 
                 <Transition
@@ -110,7 +91,7 @@ const form = useForm({
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-400"
                     >
-                        Changes saved.
+                        Perubahan disimpan.
                     </p>
                 </Transition>
             </div>

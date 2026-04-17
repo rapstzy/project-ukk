@@ -6,32 +6,26 @@ const page = usePage();
 const isLoading = ref(false);
 const progress = ref(0);
 
-// Watch for route changes
-watch(
-    () => page.url,
-    () => {
-        isLoading.value = true;
-        progress.value = 10;
+import { router } from '@inertiajs/vue3';
 
-        const timer = setTimeout(() => {
-            progress.value = 90;
-        }, 100);
+router.on('start', () => {
+    isLoading.value = true;
+    progress.value = 10;
+});
 
-        return () => clearTimeout(timer);
+router.on('progress', (event) => {
+    if (event.detail.progress?.percentage) {
+        progress.value = event.detail.progress.percentage;
     }
-);
+});
 
-// Complete loading
-watch(
-    () => page.component,
-    () => {
-        progress.value = 100;
-        setTimeout(() => {
-            isLoading.value = false;
-            progress.value = 0;
-        }, 500);
-    }
-);
+router.on('finish', () => {
+    progress.value = 100;
+    setTimeout(() => {
+        isLoading.value = false;
+        progress.value = 0;
+    }, 500);
+});
 </script>
 
 <template>

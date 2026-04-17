@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { computed, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import NotificationBell from '@/Components/NotificationBell.vue';
@@ -13,11 +13,11 @@ const menuItems = computed(() => {
     const loanRoute = isAdmin.value ? 'loans.admin' : 'loans.myLoans';
 
     return [
-        { label: 'Dashboard', href: 'dashboard', note: 'Overview' },
-        { label: 'Books', href: 'books.index', note: 'Catalog' },
-        { label: isAdmin.value ? 'Manage loans' : 'My loans', href: loanRoute, note: isAdmin.value ? 'Admin panel' : 'Borrowing' },
-        { label: 'Notifications', href: 'notifications.index', note: 'Inbox' },
-        { label: 'Profile', href: 'profile.edit', note: 'Account' },
+        { label: 'Beranda', href: 'dashboard', note: 'Ringkasan' },
+        { label: 'Buku', href: 'books.index', note: 'Katalog' },
+        { label: isAdmin.value ? 'Kelola Pinjaman' : 'Pinjaman Saya', href: loanRoute, note: isAdmin.value ? 'Panel Admin' : 'Peminjaman' },
+        { label: 'Notifikasi', href: 'notifications.index', note: 'Kotak Masuk' },
+        { label: 'Profil', href: 'profile.edit', note: 'Akun' },
     ];
 });
 
@@ -44,8 +44,8 @@ const handleLogout = () => {
                             </svg>
                         </span>
                         <div>
-                            <div class="text-sm font-bold uppercase tracking-[0.28em] text-gray-300">Apay's Books</div>
-                            <div class="text-xs text-gray-500">Library workspace</div>
+                            <div class="text-sm font-bold uppercase tracking-[0.28em] text-gray-300">Perpustakaan</div>
+                            <div class="text-xs text-gray-500">Ruang kerja</div>
                         </div>
                     </Link>
 
@@ -65,7 +65,7 @@ const handleLogout = () => {
                                 <div class="truncate text-xs text-gray-500">@{{ userHandle }}</div>
                             </div>
                             <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gray-400">
-                                {{ isAdmin ? 'Admin' : 'User' }}
+                                {{ isAdmin ? 'Admin' : 'Pengguna' }}
                             </span>
                         </div>
                     </div>
@@ -105,10 +105,10 @@ const handleLogout = () => {
                     class="flex w-full items-center justify-between rounded-[1.5rem] border border-gray-900 bg-white/5 px-4 py-4 text-left transition hover:border-red-900/40 hover:bg-red-950/30"
                 >
                     <div>
-                        <div class="text-sm font-semibold text-white">Logout</div>
-                        <div class="text-xs uppercase tracking-[0.25em] text-gray-500">End session</div>
+                        <div class="text-sm font-semibold text-white">Keluar</div>
+                        <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Akhiri sesi</div>
                     </div>
-                    <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Exit</span>
+                    <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Keluar</span>
                 </button>
             </div>
         </aside>
@@ -126,8 +126,8 @@ const handleLogout = () => {
                         </svg>
                     </span>
                     <div>
-                        <div class="text-sm font-bold uppercase tracking-[0.24em] text-gray-200">Apay's Books</div>
-                        <div class="text-xs text-gray-500">Library workspace</div>
+                        <div class="text-sm font-bold uppercase tracking-[0.24em] text-gray-200">Perpustakaan</div>
+                        <div class="text-xs text-gray-500">Ruang kerja</div>
                     </div>
                 </Link>
 
@@ -161,7 +161,7 @@ const handleLogout = () => {
                                 <div class="truncate text-xs text-gray-500">@{{ userHandle }}</div>
                             </div>
                             <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gray-400">
-                                {{ isAdmin ? 'Admin' : 'User' }}
+                                {{ isAdmin ? 'Admin' : 'Pengguna' }}
                             </span>
                         </div>
                     </Link>
@@ -187,10 +187,10 @@ const handleLogout = () => {
                         class="flex w-full items-center justify-between rounded-[1.5rem] border border-gray-900 bg-white/5 px-4 py-4 text-left text-white transition hover:border-red-900/40 hover:bg-red-950/30"
                     >
                         <div>
-                            <div class="text-sm font-semibold">Logout</div>
-                            <div class="text-xs uppercase tracking-[0.25em] text-gray-500">End session</div>
+                            <div class="text-sm font-semibold">Keluar</div>
+                            <div class="text-xs uppercase tracking-[0.25em] text-gray-500">Akhiri sesi</div>
                         </div>
-                        <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Exit</span>
+                        <span class="rounded-full border border-gray-800 bg-black px-3 py-1 text-xs font-semibold text-gray-400">Keluar</span>
                     </button>
                 </div>
             </div>

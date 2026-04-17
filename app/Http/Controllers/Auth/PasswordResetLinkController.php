@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\PasswordResetRequest;
 use App\Notifications\PasswordResetRequestedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -37,12 +39,19 @@ class PasswordResetLinkController extends Controller
         ]);
 
         $user = User::where('email', $request->input('email'))->firstOrFail();
-        $admins = User::where('role', 'admin')->get();
 
-        if ($admins->isNotEmpty() && Schema::hasTable('notifications')) {
-            Notification::send($admins, new PasswordResetRequestedNotification($user, (string) $request->ip()));
-        }
+        // Create a new request that is already approved
+        $resetRequest = PasswordResetRequest::create([
+            'user_id' => $user->id,
+            'token' => Str::random(60),
+            'status' => 'approved',
+            'expires_at' => now()->addHours(1),
+        ]);
 
-        return back()->with('status', 'Permintaan reset password sudah dikirim ke admin. Silakan tunggu konfirmasi.');
+        // Redirect directly to the reset password page
+        return redirect()->route('password.reset', [
+            'token' => $resetRequest->token,
+            'email' => $user->email
+        ]);
     }
 }

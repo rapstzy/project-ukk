@@ -40,12 +40,12 @@ const formatCurrency = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID
 
 const statusLabel = (status) => {
     const labels = {
-        borrowed: 'Borrowed',
-        verified: 'Verified',
-        returned: 'Returned',
-        late: 'Late',
-        completed: 'Completed',
-        cancelled: 'Cancelled',
+        borrowed: 'Menunggu',
+        verified: 'Terverifikasi',
+        returned: 'Dikembalikan',
+        late: 'Terlambat',
+        completed: 'Selesai',
+        cancelled: 'Dibatalkan',
     };
 
     return labels[status] || status;
@@ -76,18 +76,18 @@ const loanCount = (loan) => loan?.items?.length || 0;
 const statCards = computed(() => {
     if (props.isAdmin) {
         return [
-            { label: 'Total Loans', value: props.stats.total || 0, note: 'Semua transaksi pinjam' },
-            { label: 'Active Loans', value: props.stats.borrowed || 0, note: 'Sedang berjalan' },
-            { label: 'Books', value: props.stats.books || 0, note: 'Koleksi buku aktif' },
-            { label: 'Users', value: props.stats.users || 0, note: 'Pengguna terdaftar' },
+            { label: 'Total Pinjaman', value: props.stats.total || 0, note: 'Semua transaksi pinjam' },
+            { label: 'Pinjaman Aktif', value: props.stats.borrowed || 0, note: 'Sedang berjalan' },
+            { label: 'Buku', value: props.stats.books || 0, note: 'Koleksi buku aktif' },
+            { label: 'Pengguna', value: props.stats.users || 0, note: 'Pengguna terdaftar' },
         ];
     }
 
     return [
-        { label: 'Borrowed', value: props.stats.borrowed || 0, note: 'Sedang dipinjam' },
-        { label: 'Returned', value: props.stats.returned || 0, note: 'Sudah kembali' },
-        { label: 'Late', value: props.stats.late || 0, note: 'Perlu perhatian' },
-        { label: 'Overdue', value: props.stats.overdue || 0, note: 'Lewat jatuh tempo' },
+        { label: 'Dipinjam', value: props.stats.borrowed || 0, note: 'Sedang dipinjam' },
+        { label: 'Kembali', value: props.stats.returned || 0, note: 'Sudah kembali' },
+        { label: 'Terlambat', value: props.stats.late || 0, note: 'Perlu perhatian' },
+        { label: 'Jatuh Tempo', value: props.stats.overdue || 0, note: 'Lewat batas waktu' },
     ];
 });
 </script>
@@ -102,10 +102,10 @@ const statCards = computed(() => {
                     <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
                         <div class="max-w-3xl">
                             <div class="inline-flex rounded-full border border-gray-800 bg-black/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-gray-400">
-                                {{ isAdmin ? 'Admin view' : 'Reader view' }}
+                                {{ isAdmin ? 'Tampilan Admin' : 'Tampilan Pembaca' }}
                             </div>
                             <h1 class="mt-5 text-4xl font-black leading-[0.95] tracking-tight sm:text-6xl">
-                                {{ isAdmin ? 'Control room' : 'Your library feed' }}
+                                {{ isAdmin ? 'Ruang Kendali' : 'Beranda Anda' }}
                             </h1>
                             <p class="mt-4 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
                                 <template v-if="isAdmin">
@@ -122,8 +122,8 @@ const statCards = computed(() => {
                                 :href="route('books.index')"
                                 class="rounded-3xl border border-gray-800 bg-white/5 p-5 transition hover:border-white/20 hover:bg-white/10"
                             >
-                                <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Catalog</div>
-                                <div class="mt-2 text-lg font-semibold text-white">{{ isAdmin ? 'Open books' : 'Browse books' }}</div>
+                                <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Katalog</div>
+                                <div class="mt-2 text-lg font-semibold text-white">{{ isAdmin ? 'Kelola Buku' : 'Cari Buku' }}</div>
                                 <div class="mt-2 text-sm leading-6 text-gray-400">{{ isAdmin ? 'Kelola semua koleksi.' : 'Cari buku yang siap dipinjam.' }}</div>
                             </Link>
 
@@ -131,8 +131,8 @@ const statCards = computed(() => {
                                 :href="isAdmin ? route('loans.admin') : route('loans.myLoans')"
                                 class="rounded-3xl border border-gray-800 bg-white/5 p-5 transition hover:border-white/20 hover:bg-white/10"
                             >
-                                <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Activity</div>
-                                <div class="mt-2 text-lg font-semibold text-white">{{ isAdmin ? 'Loan panel' : 'My loans' }}</div>
+                                <div class="text-xs uppercase tracking-[0.3em] text-gray-500">Aktivitas</div>
+                                <div class="mt-2 text-lg font-semibold text-white">{{ isAdmin ? 'Panel Pinjam' : 'Pinjaman Saya' }}</div>
                                 <div class="mt-2 text-sm leading-6 text-gray-400">{{ isAdmin ? 'Masuk ke panel verifikasi.' : 'Lihat daftar pinjamanmu.' }}</div>
                             </Link>
                         </div>
@@ -156,14 +156,14 @@ const statCards = computed(() => {
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-[0.35em] text-gray-500">
-                                    {{ isAdmin ? 'System feed' : 'My loans' }}
+                                    {{ isAdmin ? 'Aliran Sistem' : 'Pinjaman Saya' }}
                                 </div>
                                 <h2 class="mt-2 text-2xl font-black text-white">
-                                    {{ isAdmin ? 'Recent borrowing activity' : 'Borrowing timeline' }}
+                                    {{ isAdmin ? 'Aktivitas Peminjaman Terbaru' : 'Timeline Peminjaman' }}
                                 </h2>
                             </div>
                             <span class="rounded-full border border-gray-800 bg-white/5 px-3 py-1 text-xs font-semibold text-gray-300">
-                                {{ loans.length }} items
+                                {{ loans.length }} item
                             </span>
                         </div>
 
@@ -180,16 +180,16 @@ const statCards = computed(() => {
                                 <div class="flex items-start justify-between gap-4">
                                     <div class="min-w-0">
                                         <div class="text-xs uppercase tracking-[0.25em] text-gray-500">
-                                            Loan #{{ loan.id }}
+                                            Pinjaman #{{ loan.id }}
                                         </div>
                                         <div class="mt-1 truncate text-lg font-semibold text-white">
-                                            {{ isAdmin ? (loan.user?.name || 'Unknown user') : (loanBooks(loan) || 'No books') }}
+                                            {{ isAdmin ? (loan.user?.name || 'Pengguna tidak dikenal') : (loanBooks(loan) || 'Tidak ada buku') }}
                                         </div>
                                         <div v-if="isAdmin" class="mt-1 text-sm text-gray-400">
                                             {{ loan.user?.email || '-' }}
                                         </div>
                                         <div v-else class="mt-1 text-sm text-gray-400">
-                                            {{ loanCount(loan) }} books borrowed
+                                            {{ loanCount(loan) }} buku dipinjam
                                         </div>
                                     </div>
 
@@ -199,9 +199,9 @@ const statCards = computed(() => {
                                 </div>
 
                                 <div class="mt-4 flex flex-wrap gap-3 text-sm text-gray-400">
-                                    <span>Loan: {{ formatDate(loan.loan_date) }}</span>
-                                    <span>Due: {{ formatDate(loan.due_date) }}</span>
-                                    <span v-if="loan.fine_amount > 0">Fine: {{ formatCurrency(loan.fine_amount) }}</span>
+                                    <span>Pinjam: {{ formatDate(loan.loan_date) }}</span>
+                                    <span>Kembali: {{ formatDate(loan.due_date) }}</span>
+                                    <span v-if="loan.fine_amount > 0">Denda: {{ formatCurrency(loan.fine_amount) }}</span>
                                 </div>
                             </article>
                         </div>
@@ -209,45 +209,45 @@ const statCards = computed(() => {
 
                     <aside class="space-y-6">
                         <section v-if="isAdmin" class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6">
-                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Shortcuts</div>
+                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Pintasan</div>
                             <div class="mt-4 space-y-3">
                                 <Link
                                     :href="route('books.index')"
                                     class="flex items-center justify-between rounded-2xl border border-gray-800 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                                 >
-                                    <span>Manage books</span>
-                                    <span class="text-gray-500">Open</span>
+                                    <span>Kelola Buku</span>
+                                    <span class="text-gray-500">Buka</span>
                                 </Link>
                                 <Link
                                     :href="route('loans.admin')"
                                     class="flex items-center justify-between rounded-2xl border border-gray-800 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                                 >
-                                    <span>Loan panel</span>
-                                    <span class="text-gray-500">Open</span>
+                                    <span>Panel Pinjam</span>
+                                    <span class="text-gray-500">Buka</span>
                                 </Link>
                                 <Link
                                     :href="route('books.create')"
                                     class="flex items-center justify-between rounded-2xl border border-gray-800 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                                 >
-                                    <span>Add new book</span>
-                                    <span class="text-gray-500">Create</span>
+                                    <span>Tambah Buku</span>
+                                    <span class="text-gray-500">Buat</span>
                                 </Link>
                             </div>
                         </section>
 
                         <section v-if="isAdmin" class="rounded-[2rem] border border-gray-800 bg-[#0b0b0b] p-6">
-                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">System snapshot</div>
+                            <div class="text-xs uppercase tracking-[0.35em] text-gray-500">Status Sistem</div>
                             <div class="mt-5 space-y-4 text-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Total books</span>
+                                    <span class="text-gray-400">Total Buku</span>
                                     <span class="font-semibold text-white">{{ stats.books || 0 }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Total users</span>
+                                    <span class="text-gray-400">Total Pengguna</span>
                                     <span class="font-semibold text-white">{{ stats.users || 0 }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Active loans</span>
+                                    <span class="text-gray-400">Pinjaman Aktif</span>
                                     <span class="font-semibold text-white">{{ stats.borrowed || 0 }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">

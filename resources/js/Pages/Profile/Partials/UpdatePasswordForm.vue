@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -115,7 +115,7 @@ const updatePassword = () => {
             </div>
 
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <PrimaryButton :disabled="form.processing">
+                <PrimaryButton :loading="form.processing">
                     {{ form.recentlySuccessful ? 'Saved' : 'Save changes' }}
                 </PrimaryButton>
 
